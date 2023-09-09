@@ -78,13 +78,8 @@ jobs:
           with:
             usesh: true
             prepare: |
-              pkg install -y wget git cmake lang/gcc
-
+              pkg install -y wget git cmake
+              
             run: |
-              pwd
-              ls -lah
-              whoami
-              env
-              freebsd-version
               cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ matrix.shared }} -B "${{github.workspace}}/build"
               cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
