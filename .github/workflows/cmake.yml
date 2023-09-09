@@ -60,3 +60,31 @@ jobs:
 
         - name: Build
           run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    FreeBSD:
+      name: freebsd-${{ matrix.shared }}
+      runs-on: macos-12
+      strategy:
+        fail-fast: false
+        matrix:
+          shared: [ON, OFF]
+
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+          with:
+              fetch-depth: 0
+        - name: Configure CMake
+          uses: vmactions/freebsd-vm@v0
+          with:
+            usesh: true
+            prepare: |
+              pkg install -y wget git cmake lang/gcc
+
+            run: |
+              pwd
+              ls -lah
+              whoami
+              env
+              freebsd-version
+              cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ matrix.shared }} -B "${{github.workspace}}/build"
+              cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
